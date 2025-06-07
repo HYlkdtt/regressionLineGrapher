@@ -1,0 +1,29 @@
+RegressionLineGrapher/
+├── .gitignore
+├── README.md
+├── backend/
+│   ├── venv/                   # your virtual environment (excluded from Git)
+│   ├── main.py                 # FastAPI entrypoint
+│   ├── regression.py           # regression logic (polyfit, uncertainties)
+│   ├── schemas.py              # Pydantic models for request/response JSON
+│   ├── requirements.txt        # pinned Python deps: fastapi, uvicorn, numpy, pandas, scipy
+│   └── .env                    # any secrets or config (CORS origins, API keys)
+│
+└── frontend/
+    ├── node_modules/           # installed npm packages (excluded from Git)
+    ├── public/
+    │   └── index.html          # HTML template
+    ├── src/
+    │   ├── App.jsx             # root React component
+    │   ├── index.jsx           # React entrypoint (renders <App />)
+    │   ├── services/
+    │   │   └── api.js          # wrapper around fetch("/regression")
+    │   ├── components/
+    │   │   ├── UploadForm.jsx  # CSV / manual data input
+    │   │   ├── Chart.jsx       # renders plot (using Chart.js/Recharts)
+    │   │   └── Controls.jsx    # buttons/sliders for options
+    │   └── styles/
+    │       └── globals.css     # global Tailwind or custom CSS
+    ├── .env                     # e.g. REACT_APP_API_URL
+    ├── package.json             # npm scripts & dependencies
+    └── vite.config.js           # Vite config (aliasing, proxies)
