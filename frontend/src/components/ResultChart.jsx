@@ -1,4 +1,3 @@
-// src/components/ResultChart.jsx
 import React from "react";
 import {
   ComposedChart,
@@ -13,18 +12,15 @@ import {
   ResponsiveContainer
 } from "recharts";
 
-export default function ResultChart({ result, dataPoints, lineData }) {
-  if (!result) {
-    return null;
-  }
-
-  // Custom legend with formatted regression equation
+export default function ResultChart({ params, dataPoints, fitCurve, power }) {
+  if (!params) return null;
+  const [a, b] = params;
   const legendPayload = [
     {
-      value: `Linear Regression: y = ${result.slope.toFixed(2)}x + ${result.intercept.toFixed(2)}`,
+      value: `Fit: y = ${a.toFixed(2)}x^${power} + ${b.toFixed(2)}`,
       type: "line",
-      id: "regression",
-      color: "#000000"
+      id: "fit",
+      color: "#ff7300"
     }
   ];
 
@@ -35,7 +31,6 @@ export default function ResultChart({ result, dataPoints, lineData }) {
           data={dataPoints}
           margin={{ top: 40, right: 30, bottom: 40, left: 50 }}
         >
-          {/* Chart title */}
           <text
             x="50%"
             y={20}
@@ -45,7 +40,6 @@ export default function ResultChart({ result, dataPoints, lineData }) {
           >
             My Graph
           </text>
-
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             type="number"
@@ -58,23 +52,18 @@ export default function ResultChart({ result, dataPoints, lineData }) {
             label={{ value: 'Y-Axis / units', angle: -90, position: 'insideLeft', dx: -20 }}
           />
           <Tooltip />
-          <Legend
-            payload={legendPayload}
-            verticalAlign="top"
-            align="left"
-            wrapperStyle={{ top: 0, left: 60 }}
-          />
+          <Legend payload={legendPayload} verticalAlign="top" align="left" wrapperStyle={{ top: 0, left: 60 }} />
 
           <Scatter name="Data Points" data={dataPoints} fill="#8884d8">
             <ErrorBar dataKey="error" width={6} strokeWidth={1} direction="y" />
           </Scatter>
 
           <Line
-            name="Fit Line"
+            name="Fit Curve"
             type="linear"
             dataKey="y"
-            data={lineData}
-            stroke="#000000"
+            data={fitCurve}
+            stroke="#ff7300"
             dot={false}
             isAnimationActive={false}
           />

@@ -1,9 +1,35 @@
-// src/components/DataTable.jsx
 import React from "react";
 
-export default function DataTable({ rows, handleCellChange, addRow, removeRow, handleSubmit }) {
+export default function DataTable({
+  rows,
+  handleCellChange,
+  addRow,
+  removeRow,
+  power,
+  onPowerChange,
+  handleSubmit
+}) {
   return (
     <form onSubmit={handleSubmit} style={{ width: "100%" }}>
+      {/* Exponent selector */}
+      <div style={{ marginBottom: "1rem" }}>
+        <label>
+          Exponent (power):
+          <input
+            type="number"
+            value={power}
+            onChange={e => onPowerChange(parseInt(e.target.value, 10) || 0)}
+            style={{
+              width: "100%",
+              boxSizing: "border-box",
+              padding: "0.25rem",
+              marginTop: "0.25rem"
+            }}
+          />
+        </label>
+      </div>
+
+      {/* Data table */}
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -16,7 +42,7 @@ export default function DataTable({ rows, handleCellChange, addRow, removeRow, h
         <tbody>
           {rows.map((row, i) => (
             <tr key={i}>
-              {['x', 'y', 'error'].map((field) => (
+              {['x', 'y', 'error'].map(field => (
                 <td key={field} style={{ padding: "0.25rem 0.5rem" }}>
                   <input
                     type="number"
@@ -32,7 +58,14 @@ export default function DataTable({ rows, handleCellChange, addRow, removeRow, h
                 <button
                   type="button"
                   onClick={() => removeRow(i)}
-                  style={{ background: "none", border: "none", color: "#c00", cursor: "pointer", fontSize: "1.2rem", lineHeight: "1" }}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: "#c00",
+                    cursor: "pointer",
+                    fontSize: "1.2rem",
+                    lineHeight: "1"
+                  }}
                 >
                   ×
                 </button>
@@ -41,15 +74,15 @@ export default function DataTable({ rows, handleCellChange, addRow, removeRow, h
           ))}
         </tbody>
       </table>
+
+      {/* Row controls */}
       <div style={{ marginTop: "0.5rem" }}>
-        <button
-          type="button"
-          onClick={addRow}
-          style={{ padding: "0.3rem 0.6rem" }}
-        >
+        <button type="button" onClick={addRow} style={{ padding: "0.3rem 0.6rem" }}>
           + Add Row
         </button>
       </div>
+
+      {/* Submit */}
       <button
         type="submit"
         style={{
