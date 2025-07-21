@@ -18,10 +18,17 @@ class PowerRegression:
         """
         Fit the model y = a * x^exponent + b to data.
         """
+        arrX0 = np.array(x, dtype=float)
+        # --- new guard for negative exponents ----
+        if self.exponent < 0 and np.any(arrX0 == 0):
+            raise ValueError("Cannot fit power<0 when some x values are zero.")
+        # Continue
         arrX = np.array(x, dtype=float) ** self.exponent
         arrY = np.array(y, dtype=float)
         # Solve for a and b via linear fit on transformed x
         self.a, self.b = np.polyfit(arrX, arrY, 1)
+
+    
 
     def predict(self, x: ArrayLike) -> np.ndarray:
         """

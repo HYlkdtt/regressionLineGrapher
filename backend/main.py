@@ -56,10 +56,20 @@ async def compute_regression(payload: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(power, int):
         raise HTTPException(status_code=422, detail="'power' must be an integer.")
 
+    # 2b. Guard against zero-division when power < 0
+    if power < 0 and any(xi == 0 for xi in x):
+        raise HTTPException(
+            status_code=422,
+            detail="Cannot use negative exponent when x contains zero."
+        )
+
     # 3. Instantiate and fit the power regression model
     reg = PowerRegression(exponent=power)
     try:
         reg.fit(x, y)
+    except ValueError as ve:
+        # e.g. negative power + zero in x
+        raise HTTPException(status_code=422, detail=str(ve))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during fitting: {e}")
 
@@ -69,7 +79,23 @@ async def compute_regression(payload: Dict[str, Any]) -> Dict[str, Any]:
     # 5. Generate sampling for the fitted curve
     arr_x = np.array(x, dtype=float)
     min_x, max_x = float(arr_x.min()), float(arr_x.max())
-    sample_x = np.linspace(min_x, max_x, num=200)
+
+    # Avoid sampling at zero for negative powers
+    if power < 0 and min_x < 0 < max_x:
+        # split around zero
+        eps = 1e-6
+        neg_side = np.linspace(min_x, -eps, num=100, endpoint=False)
+        pos_side = np.linspace(eps, max_x, num=100, endpoint=True)
+        sample_x = np.concatenate([neg_side, pos_side])
+    else:
+        # adjust endpoints if they are exactly zero
+        if power < 0:
+            if min_x == 0:
+                min_x = 1e-6
+            if max_x == 0:
+                max_x = -1e-6
+        sample_x = np.linspace(min_x, max_x, num=200)
+
     sample_y = reg.predict(sample_x)
 
     return {
